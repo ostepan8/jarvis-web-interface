@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Calendar, Grid3x3, List, Plus } from 'lucide-react';
 import DayView from './DayView';
@@ -10,36 +10,15 @@ import EventDetailModal from './EventDetailModal';
 import HoverTooltip from './HoverTooltip';
 import { CalendarEvent, Slot } from './types';
 
-// Mock API call - replace with your actual API
-const fetchEvents = async (): Promise<CalendarEvent[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return [
-    {
-      id: 1,
-      title: 'Server Maintenance',
-      start: new Date(2025, 5, 6, 10, 0),
-      end: new Date(2025, 5, 6, 12, 0),
-      color: '#3b82f6',
-      description: 'Routine server updates and optimization',
-    },
-    {
-      id: 2,
-      title: 'AI Model Training',
-      start: new Date(2025, 5, 3, 10, 0),
-      end: new Date(2025, 5, 3, 12, 0),
-      color: '#8b5cf6',
-      description: 'Training new neural network models',
-    },
-    {
-      id: 3,
-      title: 'Data Sync',
-      start: new Date(2025, 5, 6, 10, 0),
-      end: new Date(2025, 5, 6, 12, 0),
-      color: '#06b6d4',
-      description: 'Cross-server data synchronization',
-    },
-  ];
-};
+import {
+  getDayEvents,
+  getWeekEvents,
+  getMonthEvents,
+  createEvent,
+  deleteEvent,
+  getNextEvent,
+} from '@/lib/api';
+
 
 const CalendarPage = () => {
   const [view, setView] = useState<'day' | 'week' | 'month'>('week');
@@ -58,10 +37,32 @@ const CalendarPage = () => {
     endTime: '10:00',
     color: '#3b82f6',
   });
+  const [nextEvent, setNextEvent] = useState<CalendarEvent | null>(null);
+
+  const loadEvents = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      if (view === 'day') {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        setEvents(await getDayEvents(dateStr));
+      } else if (view === 'week') {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        setEvents(await getWeekEvents(dateStr));
+      } else {
+        const month = currentDate.toISOString().slice(0, 7);
+        setEvents(await getMonthEvents(month));
+      }
+      const ne = await getNextEvent();
+      setNextEvent(ne);
+    } catch (err) {
+      console.error(err);
+    }
+    setIsLoading(false);
+  }, [currentDate, view]);
 
   useEffect(() => {
     loadEvents();
-  }, [currentDate, view]);
+  }, [currentDate, view, loadEvents]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
@@ -69,12 +70,6 @@ const CalendarPage = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const loadEvents = async () => {
-    setIsLoading(true);
-    const fetchedEvents = await fetchEvents();
-    setEvents(fetchedEvents);
-    setIsLoading(false);
-  };
 
   const getViewStartDate = () => {
     const date = new Date(currentDate);
@@ -117,18 +112,31 @@ const CalendarPage = () => {
     setShowAddEvent(true);
   };
 
-  const handleCreateEvent = () => {
+  const handleDeleteEvent = async (id: string) => {
+    try {
+      await deleteEvent(id);
+      setSelectedEvent(null);
+      loadEvents();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleCreateEvent = async () => {
     const startDate = new Date(`${newEvent.date}T${newEvent.startTime}`);
     const endDate = new Date(`${newEvent.date}T${newEvent.endTime}`);
-    const event: CalendarEvent = {
-      id: Date.now(),
-      title: newEvent.title,
-      description: newEvent.description,
-      start: startDate,
-      end: endDate,
-      color: newEvent.color,
-    };
-    setEvents([...events, event]);
+    try {
+      const created = await createEvent({
+        title: newEvent.title,
+        description: newEvent.description,
+        time: `${newEvent.date} ${newEvent.startTime}`,
+        duration: Math.round((endDate.getTime() - startDate.getTime()) / 1000),
+      });
+      created.color = newEvent.color;
+      setEvents([...events, created]);
+    } catch (err) {
+      console.error(err);
+    }
     setShowAddEvent(false);
     setNewEvent({
       title: '',
@@ -200,6 +208,17 @@ const CalendarPage = () => {
             <span className="text-sm font-medium">Add Event</span>
           </motion.button>
         </div>
+        {nextEvent && (
+          <div className="text-sm text-gray-400 mt-2">
+            Next: {nextEvent.title} at{' '}
+            {nextEvent.start.toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </div>
+        )}
       </motion.div>
       <AnimatePresence>
         {isLoading && (
@@ -225,8 +244,18 @@ const CalendarPage = () => {
           )}
         </AnimatePresence>
       </motion.div>
-      <AddEventModal show={showAddEvent} newEvent={newEvent} setNewEvent={setNewEvent} onClose={() => setShowAddEvent(false)} onCreate={handleCreateEvent} />
-      <EventDetailModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
+      <AddEventModal
+        show={showAddEvent}
+        newEvent={newEvent}
+        setNewEvent={setNewEvent}
+        onClose={() => setShowAddEvent(false)}
+        onCreate={handleCreateEvent}
+      />
+      <EventDetailModal
+        event={selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+        onDelete={handleDeleteEvent}
+      />
       <HoverTooltip slot={hoveredSlot} mousePos={mousePos} show={!!hoveredSlot && !selectedEvent} />
     </div>
   );

@@ -7,9 +7,10 @@ import { CalendarEvent } from './types';
 interface Props {
   event: CalendarEvent | null;
   onClose: () => void;
+  onDelete: (id: string) => void;
 }
 
-const EventDetailModal: React.FC<Props> = ({ event, onClose }) => (
+const EventDetailModal: React.FC<Props> = ({ event, onClose, onDelete }) => (
   <AnimatePresence>
     {event && (
       <motion.div
@@ -57,7 +58,12 @@ const EventDetailModal: React.FC<Props> = ({ event, onClose }) => (
               <motion.button className="flex-1 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 Edit Event
               </motion.button>
-              <motion.button className="flex-1 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <motion.button
+                className="flex-1 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => onDelete(event.id)}
+              >
                 Delete
               </motion.button>
             </div>
