@@ -6,6 +6,7 @@ import Sphere from '@/components/Sphere';
 import InputSection from '@/components/InputSection';
 import Link from 'next/link';
 
+
 interface Message {
   text: string;
   sender: string;
