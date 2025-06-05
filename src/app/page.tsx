@@ -5,6 +5,7 @@ import ParticleField from '@/components/ParticleField';
 import Sphere from '@/components/Sphere';
 import InputSection from '@/components/InputSection';
 
+
 interface Message {
   text: string;
   sender: string;
