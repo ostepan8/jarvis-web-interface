@@ -86,14 +86,15 @@ const JarvisInterface = () => {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative flex items-center justify-center">
+      {/* Deep space background */}
+      <div className="fixed inset-0 bg-gradient-to-b from-gray-900 via-black to-blue-950 opacity-50" />
+
       <Link
         href="/calendar"
         className="absolute top-4 right-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
       >
         Calendar
       </Link>
-      {/* Deep space background */}
-      <div className="fixed inset-0 bg-gradient-to-b from-gray-900 via-black to-blue-950 opacity-50" />
 
       <ParticleField />
       <Sphere time={time} audioLevel={audioLevel} isListening={isListening} />
