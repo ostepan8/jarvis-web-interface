@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CalendarEvent, Slot } from './types';
 
@@ -19,9 +19,24 @@ const DayView: React.FC<Props> = ({
   setSelectedEvent,
 }) => {
   const hours = Array.from({ length: 24 }, (_, i) => i);
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  const isToday = currentDate.toDateString() === now.toDateString();
+  const currentTop = (now.getHours() + now.getMinutes() / 60) * 64;
 
   return (
     <div className="relative">
+      {isToday && (
+        <div
+          className="absolute left-20 right-0 h-px bg-red-500 z-20"
+          style={{ top: currentTop }}
+        />
+      )}
       <div className="grid grid-cols-[80px_1fr] gap-0">
         {hours.map((hour) => (
           <React.Fragment key={hour}>

@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CalendarEvent, Slot } from './types';
 
@@ -28,8 +28,26 @@ const WeekView: React.FC<Props> = ({
     return date;
   });
 
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  const weekStart = new Date(start);
+  const weekEnd = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const isCurrentWeek = now >= weekStart && now < weekEnd;
+  const currentTop = (now.getHours() + now.getMinutes() / 60) * 64;
+
   return (
     <div className="relative overflow-x-auto">
+      {isCurrentWeek && (
+        <div
+          className="absolute left-20 right-0 h-px bg-red-500 z-20"
+          style={{ top: currentTop }}
+        />
+      )}
       <div className="grid grid-cols-[80px_repeat(7,1fr)] gap-0 min-w-[800px]">
         <div></div>
         {days.map((d, i) => (
