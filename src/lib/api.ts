@@ -29,7 +29,9 @@ function colorForId(id: string): string {
 }
 
 function parseApiEvent(e: ApiEvent): CalendarEvent {
-  const start = new Date(e.time.replace(" ", "T"));
+  // Dates from the server are in UTC. Append a 'Z' so the browser parses the
+  // timestamp as UTC before converting it to the local timezone.
+  const start = new Date(e.time.replace(" ", "T") + "Z");
   const end = new Date(start.getTime() + e.duration * 1000);
   return {
     id: e.id,
