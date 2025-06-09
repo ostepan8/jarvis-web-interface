@@ -37,7 +37,6 @@ interface Props {
 const WeekView: React.FC<Props> = ({
   currentDate,
   events,
-  setHoveredSlot,
   handleSlotClick,
   setSelectedEvent,
   onDragCreateEvent,
@@ -66,17 +65,17 @@ const WeekView: React.FC<Props> = ({
   const today = new Date();
   const todayIndex = days.findIndex(d => d.toDateString() === today.toDateString());
 
-  const {
-    dragState,
-    handleDragStart,
-    handleDragMove,
-    handleDragEnd,
-    isSlotInDragRange,
-  } = useDragToCreate((startSlot, endSlot) => {
-    if (onDragCreateEvent && !isDisabled) {
-      onDragCreateEvent(startSlot, endSlot);
-    }
-  });
+  // const {
+  //   dragState,
+  //   handleDragStart,
+  //   handleDragMove,
+  //   handleDragEnd,
+  //   isSlotInDragRange,
+  // } = useDragToCreate((startSlot, endSlot) => {
+  //   if (onDragCreateEvent && !isDisabled) {
+  //     onDragCreateEvent(startSlot, endSlot);
+  //   }
+  // });
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);

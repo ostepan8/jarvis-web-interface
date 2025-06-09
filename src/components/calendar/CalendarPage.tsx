@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Calendar, Grid3x3, List, Plus, ArrowLeft, Trash2, AlertCircle, Loader2, Info, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
