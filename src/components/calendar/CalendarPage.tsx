@@ -713,7 +713,7 @@ const CalendarPage = () => {
               key="day"
               currentDate={currentDate}
               events={events}
-              // setHoveredSlot={setHoveredSlot}
+              setHoveredSlot={setHoveredSlot}
               handleSlotClick={handleSlotClick}
               setSelectedEvent={setSelectedEvent}
               onDragCreateEvent={handleDragCreateEvent}
