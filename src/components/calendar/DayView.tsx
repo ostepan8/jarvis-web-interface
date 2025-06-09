@@ -34,7 +34,8 @@ const DayView: React.FC<Props> = ({
   const [touchStartTime, setTouchStartTime] = useState<number>(0);
   const [touchStartY, setTouchStartY] = useState<number>(0);
   const [isScrolling, setIsScrolling] = useState(false);
-  const longPressTimerRef = useRef<NodeJS.Timeout>();
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+
 
   const {
     // dragState,
