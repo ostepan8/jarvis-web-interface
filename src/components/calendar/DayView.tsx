@@ -122,7 +122,6 @@ const DayView: React.FC<Props> = ({
     return events.some(event => {
       const eventStartHour = event.start.getHours();
       const eventEndHour = event.end.getHours();
-      const eventStartMinutes = event.start.getMinutes();
       const eventEndMinutes = event.end.getMinutes();
 
       // If event spans multiple days, handle it

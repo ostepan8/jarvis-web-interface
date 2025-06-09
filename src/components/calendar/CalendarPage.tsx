@@ -85,7 +85,7 @@ const CalendarPage = () => {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutside = () => {
       if (showBulkMenu) {
         setShowBulkMenu(false);
       }
@@ -405,7 +405,7 @@ const CalendarPage = () => {
                       disabled={isDeleting}
                     >
                       <AlertCircle size={14} />
-                      Delete Today's Events
+                      Delete Today&apos;s Events
                     </button>
                     <button
                       onClick={() => {
@@ -416,7 +416,7 @@ const CalendarPage = () => {
                       disabled={isDeleting}
                     >
                       <AlertCircle size={14} />
-                      Delete Week's Events
+                      Delete Week&apos;s Events
                     </button>
                     <button
                       onClick={() => {
