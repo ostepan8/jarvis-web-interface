@@ -34,6 +34,14 @@ const DayView: React.FC<Props> = ({
   const [isScrolling, setIsScrolling] = useState(false);
   const longPressTimerRef = useRef<NodeJS.Timeout>();
 
+  const {
+    isSlotInDragRange,
+  } = useDragToCreate((startSlot, endSlot) => {
+    if (onDragCreateEvent && !isDisabled) {
+      onDragCreateEvent(startSlot, endSlot);
+    }
+  });
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);

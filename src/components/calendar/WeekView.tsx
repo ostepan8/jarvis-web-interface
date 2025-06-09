@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CalendarEvent, Slot } from './types';
-import { useDragToCreate } from './useDragToCreate';
 
 // Mobile detection hook
 const useMobileDetection = () => {
@@ -39,7 +38,6 @@ const WeekView: React.FC<Props> = ({
   events,
   handleSlotClick,
   setSelectedEvent,
-  onDragCreateEvent,
   isDisabled = false,
 }) => {
   const hours = Array.from({ length: 24 }, (_, i) => i);
