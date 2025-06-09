@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CalendarEvent, Slot } from './types';
+import { useDragToCreate } from './useDragToCreate';
 
 // Mobile detection hook
 const useMobileDetection = () => {
@@ -36,8 +37,10 @@ interface Props {
 const WeekView: React.FC<Props> = ({
   currentDate,
   events,
+  // setHoveredSlot,
   handleSlotClick,
   setSelectedEvent,
+  onDragCreateEvent,
   isDisabled = false,
 }) => {
   const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -49,7 +52,7 @@ const WeekView: React.FC<Props> = ({
   const [touchStartTime, setTouchStartTime] = useState<number>(0);
   const [touchStartY, setTouchStartY] = useState<number>(0);
   const [isScrolling, setIsScrolling] = useState(false);
-  const longPressTimerRef = useRef<NodeJS.Timeout>();
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const start = new Date(currentDate);
   const day = start.getDay();
@@ -63,17 +66,17 @@ const WeekView: React.FC<Props> = ({
   const today = new Date();
   const todayIndex = days.findIndex(d => d.toDateString() === today.toDateString());
 
-  // const {
-  //   dragState,
-  //   handleDragStart,
-  //   handleDragMove,
-  //   handleDragEnd,
-  //   isSlotInDragRange,
-  // } = useDragToCreate((startSlot, endSlot) => {
-  //   if (onDragCreateEvent && !isDisabled) {
-  //     onDragCreateEvent(startSlot, endSlot);
-  //   }
-  // });
+  const {
+    // dragState,
+    // handleDragStart,
+    // handleDragMove,
+    // handleDragEnd,
+    isSlotInDragRange,
+  } = useDragToCreate((startSlot, endSlot) => {
+    if (onDragCreateEvent && !isDisabled) {
+      onDragCreateEvent(startSlot, endSlot);
+    }
+  });
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
