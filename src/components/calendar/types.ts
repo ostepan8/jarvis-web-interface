@@ -11,3 +11,9 @@ export interface Slot {
   day: Date;
   hour: number;
 }
+
+export interface DragState {
+  startSlot: Slot | null;
+  endSlot: Slot | null;
+  isDragging: boolean;
+}

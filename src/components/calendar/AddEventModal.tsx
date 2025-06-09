@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 
 interface NewEvent {
   title: string;
@@ -18,9 +18,10 @@ interface Props {
   setNewEvent: (e: NewEvent) => void;
   onClose: () => void;
   onCreate: () => void;
+  isCreating?: boolean;
 }
 
-const AddEventModal: React.FC<Props> = ({ show, newEvent, setNewEvent, onClose, onCreate }) => (
+const AddEventModal: React.FC<Props> = ({ show, newEvent, setNewEvent, onClose, onCreate, isCreating = false }) => (
   <AnimatePresence>
     {show && (
       <motion.div
@@ -55,9 +56,10 @@ const AddEventModal: React.FC<Props> = ({ show, newEvent, setNewEvent, onClose, 
               </h3>
               <motion.button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
+                disabled={isCreating}
               >
                 <X size={20} />
               </motion.button>
@@ -65,7 +67,9 @@ const AddEventModal: React.FC<Props> = ({ show, newEvent, setNewEvent, onClose, 
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                onCreate();
+                if (!isCreating && newEvent.title.trim()) {
+                  onCreate();
+                }
               }}
               className="space-y-4"
             >
@@ -75,9 +79,10 @@ const AddEventModal: React.FC<Props> = ({ show, newEvent, setNewEvent, onClose, 
                   type="text"
                   value={newEvent.title}
                   onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter event title..."
                   required
+                  disabled={isCreating}
                   whileFocus={{ scale: 1.02 }}
                 />
               </div>
@@ -86,9 +91,10 @@ const AddEventModal: React.FC<Props> = ({ show, newEvent, setNewEvent, onClose, 
                 <motion.textarea
                   value={newEvent.description}
                   onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 resize-none"
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Add event details..."
                   rows={3}
+                  disabled={isCreating}
                   whileFocus={{ scale: 1.02 }}
                 />
               </div>
@@ -99,8 +105,9 @@ const AddEventModal: React.FC<Props> = ({ show, newEvent, setNewEvent, onClose, 
                     type="date"
                     value={newEvent.date}
                     onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+                    className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     required
+                    disabled={isCreating}
                     whileFocus={{ scale: 1.02 }}
                   />
                 </div>
@@ -110,8 +117,9 @@ const AddEventModal: React.FC<Props> = ({ show, newEvent, setNewEvent, onClose, 
                     type="time"
                     value={newEvent.startTime}
                     onChange={(e) => setNewEvent({ ...newEvent, startTime: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+                    className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     required
+                    disabled={isCreating}
                     whileFocus={{ scale: 1.02 }}
                   />
                 </div>
@@ -121,8 +129,9 @@ const AddEventModal: React.FC<Props> = ({ show, newEvent, setNewEvent, onClose, 
                     type="time"
                     value={newEvent.endTime}
                     onChange={(e) => setNewEvent({ ...newEvent, endTime: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+                    className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     required
+                    disabled={isCreating}
                     whileFocus={{ scale: 1.02 }}
                   />
                 </div>
@@ -134,38 +143,63 @@ const AddEventModal: React.FC<Props> = ({ show, newEvent, setNewEvent, onClose, 
                     <motion.button
                       key={color}
                       type="button"
-                      onClick={() => setNewEvent({ ...newEvent, color })}
-                      className={`w-10 h-10 rounded-lg border-2 transition-all ${newEvent.color === color ? 'border-white scale-110' : 'border-transparent'}`}
+                      onClick={() => !isCreating && setNewEvent({ ...newEvent, color })}
+                      className={`w-10 h-10 rounded-lg border-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${newEvent.color === color ? 'border-white scale-110' : 'border-transparent'
+                        }`}
                       style={{ backgroundColor: color }}
-                      whileHover={{ scale: 1.2 }}
-                      whileTap={{ scale: 0.9 }}
+                      disabled={isCreating}
+                      whileHover={{ scale: isCreating ? 1 : 1.2 }}
+                      whileTap={{ scale: isCreating ? 1 : 0.9 }}
                     />
                   ))}
                 </div>
               </div>
+
+              {/* Error message for invalid time */}
+              {newEvent.startTime && newEvent.endTime && newEvent.startTime >= newEvent.endTime && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-sm text-red-400 bg-red-400/10 p-2 rounded-lg"
+                >
+                  End time must be after start time
+                </motion.p>
+              )}
+
               <div className="flex gap-3 pt-4">
                 <motion.button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors font-medium"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isCreating}
+                  whileHover={{ scale: isCreating ? 1 : 1.02 }}
+                  whileTap={{ scale: isCreating ? 1 : 0.98 }}
                 >
                   Cancel
                 </motion.button>
                 <motion.button
                   type="submit"
-                  className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-lg transition-all font-medium relative overflow-hidden group"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-lg transition-all font-medium relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isCreating || !newEvent.title.trim() || (newEvent.startTime >= newEvent.endTime)}
+                  whileHover={{ scale: isCreating ? 1 : 1.02 }}
+                  whileTap={{ scale: isCreating ? 1 : 0.98 }}
                 >
-                  <span className="relative z-10">Create Event</span>
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500"
-                    initial={{ x: '100%' }}
-                    whileHover={{ x: 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
+                  {isCreating ? (
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      <Loader2 size={16} className="animate-spin" />
+                      Creating...
+                    </span>
+                  ) : (
+                    <>
+                      <span className="relative z-10">Create Event</span>
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500"
+                        initial={{ x: '100%' }}
+                        whileHover={{ x: 0 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </>
+                  )}
                 </motion.button>
               </div>
             </form>
