@@ -8,6 +8,7 @@ import { useMobileDetection } from './useMobileDetection';
 interface Props {
   currentDate: Date;
   events: CalendarEvent[];
+  setHoveredSlot: (slot: Slot | null) => void;
   handleSlotClick: (day: Date, hour: number) => void;
   setSelectedEvent: (e: CalendarEvent) => void;
   onDragCreateEvent?: (startSlot: Slot, endSlot: Slot) => void;
@@ -17,6 +18,7 @@ interface Props {
 const DayView: React.FC<Props> = ({
   currentDate,
   events,
+  // setHoveredSlot,
   handleSlotClick,
   setSelectedEvent,
   onDragCreateEvent,
@@ -35,6 +37,10 @@ const DayView: React.FC<Props> = ({
   const longPressTimerRef = useRef<NodeJS.Timeout>();
 
   const {
+    // dragState,
+    // handleDragStart,
+    // handleDragMove,
+    // handleDragEnd,
     isSlotInDragRange,
   } = useDragToCreate((startSlot, endSlot) => {
     if (onDragCreateEvent && !isDisabled) {
