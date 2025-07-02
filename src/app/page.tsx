@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import ParticleField from '@/components/ParticleField';
 import JarvisOrb from '@/components/JarvisOrb';
 import InputSection from '@/components/InputSection';
-import Link from 'next/link';
 
 
 
@@ -64,12 +63,6 @@ const JarvisInterface = () => {
       {/* Deep space background */}
       <div className="fixed inset-0 bg-gradient-to-b from-gray-900 via-black to-blue-950 opacity-50" />
 
-      <Link
-        href="/calendar"
-        className="absolute top-4 right-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500"
-      >
-        Calendar
-      </Link>
 
       <ParticleField />
       <div className="w-full h-full absolute top-0 left-0 pointer-events-none flex items-center justify-center">
