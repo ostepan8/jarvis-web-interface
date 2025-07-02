@@ -1,8 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { useAnimationFrame } from 'framer-motion';
 import ParticleField from '@/components/ParticleField';
-import Sphere from '@/components/Sphere';
+import JarvisOrb from '@/components/JarvisOrb';
 import InputSection from '@/components/InputSection';
 import Link from 'next/link';
 
@@ -18,45 +17,21 @@ const JarvisInterface = () => {
   const [isListening, setIsListening] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const audioContext = useRef<AudioContext | null>(null);
-  const analyser = useRef<AnalyserNode | null>(null);
-  const dataArray = useRef<Uint8Array | null>(null);
   const source = useRef<MediaStreamAudioSourceNode | null>(null);
 
-  // Animated sphere state
-  const [time, setTime] = useState(0);
-  const [audioLevel, setAudioLevel] = useState(0);
-
-  useAnimationFrame((t) => {
-    setTime(t / 1000);
-  });
-
-  // Initialize audio context for voice visualization
+  // Basic microphone access when listening starts
   useEffect(() => {
     if (isListening && !audioContext.current) {
       const AudioCtx =
         window.AudioContext ||
         (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       audioContext.current = new AudioCtx();
-      analyser.current = audioContext.current.createAnalyser();
-      analyser.current.fftSize = 256;
-      dataArray.current = new Uint8Array(analyser.current.frequencyBinCount);
 
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then((stream) => {
-          if (!audioContext.current || !analyser.current) return;
+          if (!audioContext.current) return;
           source.current = audioContext.current.createMediaStreamSource(stream);
-          source.current.connect(analyser.current);
-
-          const checkAudioLevel = () => {
-            if (analyser.current && dataArray.current && isListening) {
-              analyser.current.getByteFrequencyData(dataArray.current);
-              const average = dataArray.current.reduce((a, b) => a + b) / dataArray.current.length;
-              setAudioLevel(average / 255);
-              requestAnimationFrame(checkAudioLevel);
-            }
-          };
-          checkAudioLevel();
         })
         .catch((err) => console.error('Error accessing microphone:', err));
     }
@@ -97,7 +72,9 @@ const JarvisInterface = () => {
       </Link>
 
       <ParticleField />
-      <Sphere time={time} audioLevel={audioLevel} isListening={isListening} />
+      <div className="w-full h-full absolute top-0 left-0 pointer-events-none flex items-center justify-center">
+        <JarvisOrb />
+      </div>
       <InputSection
         input={input}
         onInputChange={setInput}
