@@ -4,12 +4,13 @@ import {
     ChevronUp, Mic, Activity
 } from "lucide-react";
 import { useState } from "react";
+import { ArgumentDefinition } from "../../../types";
 
 // Argument Input Component
 const ArgumentInput: React.FC<{
-    arg: any;
-    value: any;
-    onChange: (value: any) => void;
+    arg: ArgumentDefinition;
+    value: string | undefined;
+    onChange: (value: string) => void;
 }> = ({ arg, value, onChange }) => {
     if (arg.type === 'choice' && arg.choices) {
         return (
@@ -51,12 +52,12 @@ const ArgumentInput: React.FC<{
 const ProtocolCard: React.FC<{
     protocol: Protocol;
     isRunning: boolean;
-    onRun: (protocol: Protocol, args?: Record<string, any>) => void;
+    onRun: (protocol: Protocol, args?: Record<string, string>) => void;
     searchTerm: string;
 }> = ({ protocol, isRunning, onRun, searchTerm }) => {
     const [expanded, setExpanded] = useState(false);
     const [showArguments, setShowArguments] = useState(false);
-    const [arguments_, setArguments] = useState<Record<string, any>>({});
+    const [arguments_, setArguments] = useState<Record<string, string>>({});
 
     const hasRequiredArgs = protocol.argument_definitions?.some(arg => arg.required);
     const canExecute = !hasRequiredArgs || protocol.argument_definitions?.every(arg =>

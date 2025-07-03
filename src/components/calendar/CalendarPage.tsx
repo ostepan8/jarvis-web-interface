@@ -13,7 +13,7 @@ import MonthView from './MonthView';
 import AddEventModal from './AddEventModal';
 import EventDetailModal from './EventDetailModal';
 import HoverTooltip from './HoverTooltip';
-import { CalendarEvent, Slot, EventStats } from './types';
+import { CalendarEvent, Slot, EventStats } from '../../../types';
 import {
   getDayEvents,
   getWeekEvents,
@@ -1067,7 +1067,7 @@ const CalendarPage = () => {
                             disabled={isDeleting}
                           >
                             <AlertCircle size={14} />
-                            DELETE TODAY'S EVENTS
+                            DELETE TODAY&apos;S EVENTS
                           </button>
                           <button
                             onClick={() => {
@@ -1078,7 +1078,7 @@ const CalendarPage = () => {
                             disabled={isDeleting}
                           >
                             <AlertCircle size={14} />
-                            DELETE WEEK'S EVENTS
+                            DELETE WEEK&apos;S EVENTS
                           </button>
                           <button
                             onClick={() => {

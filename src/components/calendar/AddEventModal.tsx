@@ -5,7 +5,7 @@ import {
   X, Loader2, Calendar, Clock, Palette, Repeat, CheckSquare,
   AlertTriangle, Tag, Bell, Zap,
 } from 'lucide-react';
-import { CalendarEvent } from './types';
+import { CalendarEvent } from '../../../types';
 
 interface NewEvent {
   title: string;

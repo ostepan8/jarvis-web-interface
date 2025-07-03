@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Slot, DragState } from './types';
+import { Slot, DragState } from '../../../types';
 
 export const useDragToCreate = (onCreateEvent: (startSlot: Slot, endSlot: Slot) => void) => {
     const [dragState, setDragState] = useState<DragState>({

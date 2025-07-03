@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Slot } from './types';
+import { Slot } from '../../../types';
 
 interface Props {
   slot: Slot | null;

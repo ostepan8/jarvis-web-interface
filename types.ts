@@ -95,7 +95,7 @@ export interface ArgumentDefinition {
 export interface ProtocolStep {
   agent: string;
   function: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, string | number | boolean | null>;
   parameter_mappings: Record<string, string>;
 }
 
@@ -109,7 +109,7 @@ export interface Protocol {
 
 export interface ProtocolRunResult {
   protocol: string;
-  results: any;
+  results: Record<string, unknown>;
   status?: "success" | "error" | "running";
   duration?: number;
   error?: string;

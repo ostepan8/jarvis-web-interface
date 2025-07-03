@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, X, Loader2, Calendar, AlarmClock, Edit, Trash2, Activity } from 'lucide-react';
-import { CalendarEvent } from './types';
+import { CalendarEvent } from '../../../types';
 
 interface Props {
   event: CalendarEvent | null;

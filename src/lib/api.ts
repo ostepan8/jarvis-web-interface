@@ -8,7 +8,7 @@ import {
   ProtocolRunResult,
   TimeSlot,
   ValidationResult,
-} from "@/components/calendar/types";
+} from "../../types";
 
 // lib/api.ts
 const API_BASE_URL = "http://127.0.0.1:8080";
@@ -664,7 +664,7 @@ export const getProtocols = async (): Promise<Protocol[]> => {
 
 export const runProtocol = async (
   protocolName: string,
-  parameters?: Record<string, any>
+  parameters?: Record<string, string | number | boolean | null>
 ): Promise<ProtocolRunResult> => {
   try {
     const response = await fetch(`${JARVIS_API_BASE_URL}/protocols/run`, {
