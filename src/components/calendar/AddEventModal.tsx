@@ -265,10 +265,11 @@ const AddEventModal: React.FC<Props> = ({
                             ...newEvent,
                             recurrencePattern: {
                               ...newEvent.recurrencePattern,
-                              type: e.target.value as any
+                              type: e.target.value as 'daily' | 'weekly' | 'monthly' | 'yearly'
                             }
                           })}
-                          className="w-full px-3 py-2 bg-gray-800/50 border border-blue-400/40 rounded-lg text-blue-300 font-mono text-sm focus:border-blue-300 focus:outline-none"
+                          className="w-full px-3 py-2 bg-gray-800/50 border border-blue-400/40 rounded-lg 
+                            text-blue-300 font-mono text-sm focus:border-blue-300 focus:outline-none"
                           disabled={isCreating}
                         >
                           <option value="daily">Daily</option>

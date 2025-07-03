@@ -247,8 +247,11 @@ const ProtocolCard: React.FC<{
                                 </h4>
                                 <div className="max-h-32 overflow-y-auto space-y-1">
                                     {protocol.trigger_phrases.slice(0, 5).map((phrase, index) => (
-                                        <div key={index} className="text-xs font-mono text-gray-400 p-2 bg-gray-800/30 rounded border border-gray-700/50">
-                                            "{highlightText(phrase, searchTerm)}"
+                                        <div
+                                            key={index}
+                                            className="text-xs font-mono text-gray-400 p-2 bg-gray-800/30 rounded border border-gray-700/50"
+                                        >
+                                            &quot;{highlightText(phrase, searchTerm)}&quot;
                                         </div>
                                     ))}
                                     {protocol.trigger_phrases.length > 5 && (
