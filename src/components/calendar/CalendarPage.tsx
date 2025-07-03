@@ -57,7 +57,7 @@ const useMobileDetection = () => {
 
 const CalendarPage = () => {
   const router = useRouter();
-  const { isMobile, isTouch } = useMobileDetection();
+  const { isMobile } = useMobileDetection();
   const [view, setView] = useState<'day' | 'week' | 'month'>('day');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -67,7 +67,7 @@ const CalendarPage = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [hoveredSlot, setHoveredSlot] = useState<Slot | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [mousePos] = useState({ x: 0, y: 0 });
   const [showAddEvent, setShowAddEvent] = useState(false);
   const [showBulkMenu, setShowBulkMenu] = useState(false);
   const [showMobileInfo, setShowMobileInfo] = useState(false);
@@ -81,7 +81,6 @@ const CalendarPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [stats, setStats] = useState<EventStats | null>(null);
   const [conflicts, setConflicts] = useState<CalendarEvent[]>([]);
-  const [freeSlots, setFreeSlots] = useState<any[]>([]);
 
   const [newEvent, setNewEvent] = useState({
     title: '',

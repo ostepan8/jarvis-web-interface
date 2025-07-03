@@ -1,7 +1,7 @@
 import { Protocol } from "@/lib/api";
 import {
     Code, Loader, Play, Settings, Terminal, ChevronDown,
-    ChevronUp, Mic, Hash, Zap, Activity
+    ChevronUp, Mic, Activity
 } from "lucide-react";
 import { useState } from "react";
 

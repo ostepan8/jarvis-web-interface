@@ -18,4 +18,99 @@ export interface DragState {
   isDragging: boolean;
 }
 
-export interface EventStats {}
+// Base interfaces
+export interface ApiEvent {
+  id: string;
+  title: string;
+  description: string;
+  time: string;
+  duration: number; // in seconds
+  category?: string;
+}
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  description: string;
+  start: Date;
+  end: Date;
+  color: string;
+  category?: string;
+}
+
+export interface TimeSlot {
+  start: string;
+  end: string;
+  duration_minutes: number;
+}
+
+export interface EventStats {
+  total_events: number;
+  total_minutes: number;
+  events_by_category: Record<string, number>;
+  busiest_days: Array<{ date: string; event_count: number }>;
+  busiest_hours: Array<{ hour: number; event_count: number }>;
+}
+
+export interface RecurrencePattern {
+  type: "daily" | "weekly" | "monthly" | "yearly";
+  interval?: number;
+  max?: number;
+  end?: string;
+  days?: number[]; // For weekly recurrence
+}
+
+export interface CreateRecurringEventData {
+  title: string;
+  description?: string;
+  start: string;
+  duration?: number;
+  category?: string;
+  pattern: RecurrencePattern;
+}
+
+export interface CreateTaskData {
+  title: string;
+  description?: string;
+  time: string;
+  notifier: string;
+  action: string;
+  notify?: string[]; // Duration strings like "10m", "1h"
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  conflicts?: CalendarEvent[];
+}
+
+// Protocol interfaces (keeping existing ones)
+export interface ArgumentDefinition {
+  name: string;
+  type: string;
+  choices?: string[];
+  required: boolean;
+  description: string;
+}
+
+export interface ProtocolStep {
+  agent: string;
+  function: string;
+  parameters: Record<string, any>;
+  parameter_mappings: Record<string, string>;
+}
+
+export interface Protocol {
+  name: string;
+  description: string;
+  argument_definitions: ArgumentDefinition[];
+  trigger_phrases: string[];
+  steps: ProtocolStep[];
+}
+
+export interface ProtocolRunResult {
+  protocol: string;
+  results: any;
+  status?: "success" | "error" | "running";
+  duration?: number;
+  error?: string;
+}
