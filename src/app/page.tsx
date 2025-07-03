@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, Send, Volume2, VolumeX, Settings, Loader2, Wifi, WifiOff } from 'lucide-react';
+import { Mic, MicOff, Send, Loader2, Wifi, WifiOff } from 'lucide-react';
 import ParticleField from '@/components/ParticleField';
 import JarvisOrb from '@/components/JarvisOrb';
 
@@ -15,11 +15,15 @@ interface Message {
 }
 
 interface JarvisResponse {
-  response?: string | { response?: string; suggestions?: string[]; context?: any };
+  response?: string | {
+    response?: string;
+    suggestions?: string[];
+    context?: unknown;
+  };
   error?: string;
-  metadata?: any;
+  metadata?: unknown;
   suggestions?: string[];
-  context?: any;
+  context?: unknown;
 }
 
 // Message Component with JARVIS styling
@@ -239,7 +243,7 @@ const JarvisInterface: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [audioEnabled] = useState(true);
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -284,7 +288,9 @@ const JarvisInterface: React.FC = () => {
   // Audio context for microphone access
   useEffect(() => {
     if (isListening && !audioContextRef.current) {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       audioContextRef.current = new AudioCtx();
 
       navigator.mediaDevices

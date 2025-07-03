@@ -4,9 +4,18 @@ import ProtocolCard from "@/components/protocol/card";
 import ExecutionModal from "@/components/protocol/execution_modal";
 import { getProtocols, Protocol, ProtocolRunResult, runProtocol } from "@/lib/api";
 import {
-  Loader, Terminal, Zap, AlertCircle, Wifi, WifiOff,
-  Search, Filter, Mic, Hash, Activity, Brain, Database,
-  Settings as SettingsIcon, Cpu
+  Loader,
+  Terminal,
+  Zap,
+  AlertCircle,
+  Wifi,
+  WifiOff,
+  Search,
+  Activity,
+  Brain,
+  Database,
+  Settings as SettingsIcon,
+  Cpu
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -27,7 +36,8 @@ export default function ProtocolsPage() {
     try {
       const response = await fetch('http://0.0.0.0:8000/protocols');
       setConnectionStatus(response.ok ? 'connected' : 'disconnected');
-    } catch (error) {
+    } catch (err) {
+      console.error('Connection check failed:', err);
       setConnectionStatus('disconnected');
     }
   };
@@ -50,7 +60,10 @@ export default function ProtocolsPage() {
     }
   };
 
-  const handleRunProtocol = async (protocol: Protocol, args?: Record<string, any>) => {
+  const handleRunProtocol = async (
+    protocol: Protocol,
+    args?: Record<string, unknown>
+  ) => {
     setRunningProtocols(prev => new Set(prev).add(protocol.name));
 
     try {
@@ -124,18 +137,6 @@ export default function ProtocolsPage() {
     }
   };
 
-  const getCategoryIcon = (category: string) => {
-    const iconMap: Record<string, any> = {
-      'PhillipsHue': Zap,
-      'Weather': Activity,
-      'Calendar': Database,
-      'System': Cpu,
-      'AI': Brain,
-      'all': SettingsIcon
-    };
-    const IconComponent = iconMap[category] || Terminal;
-    return <IconComponent className="w-4 h-4" />;
-  };
 
   if (loading) {
     return (
@@ -294,7 +295,7 @@ export default function ProtocolsPage() {
                       <span className="text-gray-400">Active filters:</span>
                       {searchTerm && (
                         <span className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-lg border border-cyan-400/30">
-                          "{searchTerm}" in {searchMode}
+                          &quot;{searchTerm}&quot; in {searchMode}
                         </span>
                       )}
                       {selectedCategory !== 'all' && (
