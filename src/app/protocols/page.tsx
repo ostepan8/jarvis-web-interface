@@ -2,7 +2,8 @@
 
 import ProtocolCard from "@/components/protocol/card";
 import ExecutionModal from "@/components/protocol/execution_modal";
-import { getProtocols, Protocol, ProtocolRunResult, runProtocol } from "@/lib/api";
+import { getProtocols, runProtocol } from "@/lib/api";
+import { Protocol, ProtocolRunResult } from "../../../types";
 import {
   Loader,
   Terminal,
