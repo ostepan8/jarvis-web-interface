@@ -3,7 +3,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X, Loader2, Calendar, Clock, Palette, Repeat, CheckSquare,
-  AlertTriangle, Tag, Bell, Zap, Settings
+  AlertTriangle, Tag, Bell, Zap,
 } from 'lucide-react';
 import { CalendarEvent } from './types';
 

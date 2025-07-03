@@ -3,8 +3,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft, ChevronRight, Calendar, Grid3x3, List, Plus, ArrowLeft,
-  Trash2, AlertCircle, Loader2, Info, X, Activity, Zap, Search,
-  BarChart3, Repeat, CheckSquare, Filter, Clock
+  Trash2, AlertCircle, Loader2, Info, X, Activity, Search,
+  BarChart3, Filter
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import DayView from './DayView';
@@ -14,7 +14,6 @@ import AddEventModal from './AddEventModal';
 import EventDetailModal from './EventDetailModal';
 import HoverTooltip from './HoverTooltip';
 import { CalendarEvent, Slot, EventStats } from './types';
-
 import {
   getDayEvents,
   getWeekEvents,
@@ -26,7 +25,6 @@ import {
   deleteDayEvents,
   deleteWeekEvents,
   getCategories,
-  getEventsByCategory,
   searchEvents,
   getEventStats,
   getRecurringEvents,
@@ -34,10 +32,7 @@ import {
   createRecurringEvent,
   createTask,
   getConflicts,
-  validateEventTime,
-  getFreeSlots,
-  formatDateForApi,
-  CalendarEvent as APICalendarEvent
+  formatDateForApi
 } from '@/lib/api';
 
 // Mobile detection hook

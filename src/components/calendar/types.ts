@@ -17,3 +17,5 @@ export interface DragState {
   endSlot: Slot | null;
   isDragging: boolean;
 }
+
+export interface EventStats {}
