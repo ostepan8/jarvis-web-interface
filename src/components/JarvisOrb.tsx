@@ -4,7 +4,6 @@ import {
   useFrame,
   extend,
   useThree,
-  type ReactThreeFiber,
   type ThreeEvent
 } from '@react-three/fiber';
 import { Sphere, Torus, OrbitControls, Stars, shaderMaterial } from '@react-three/drei';
@@ -164,21 +163,46 @@ const ParticleMaterial = shaderMaterial(
 // Extend the materials to make them available in JSX
 extend({ EnergyCoreMaterial, HologramRingMaterial, ParticleMaterial });
 
-// TypeScript declarations for the extended materials
+// Type declarations for custom materials
+type EnergyCoreMaterialType = {
+  time?: number;
+  intensity?: number;
+  pulseFreq?: number;
+  coreColor?: THREE.Color;
+  rimColor?: THREE.Color;
+  transparent?: boolean;
+  side?: THREE.Side;
+  blending?: THREE.Blending;
+  ref?: React.Ref<THREE.ShaderMaterial>;
+};
+
+type HologramRingMaterialType = {
+  time?: number;
+  opacity?: number;
+  speed?: number;
+  glowColor?: THREE.Color;
+  wireColor?: THREE.Color;
+  transparent?: boolean;
+  side?: THREE.Side;
+  blending?: THREE.Blending;
+  ref?: React.Ref<THREE.ShaderMaterial>;
+};
+
+type ParticleMaterialType = {
+  time?: number;
+  size?: number;
+  color?: THREE.Color;
+  transparent?: boolean;
+  blending?: THREE.Blending;
+  ref?: React.Ref<THREE.ShaderMaterial>;
+};
+
+// Augment the JSX namespace to include custom materials
 declare module '@react-three/fiber' {
   interface ThreeElements {
-    energyCoreMaterial: ReactThreeFiber.Object3DNode<
-      THREE.ShaderMaterial,
-      typeof THREE.ShaderMaterial
-    >;
-    hologramRingMaterial: ReactThreeFiber.Object3DNode<
-      THREE.ShaderMaterial,
-      typeof THREE.ShaderMaterial
-    >;
-    particleMaterial: ReactThreeFiber.Object3DNode<
-      THREE.ShaderMaterial,
-      typeof THREE.ShaderMaterial
-    >;
+    energyCoreMaterial: EnergyCoreMaterialType;
+    hologramRingMaterial: HologramRingMaterialType;
+    particleMaterial: ParticleMaterialType;
   }
 }
 
@@ -240,10 +264,10 @@ const EnergyRings: React.FC<{ hovered: boolean }> = ({ hovered }) => {
   )[]>([]);
 
   const ringConfigs = useMemo(() => [
-    { radius: 2.2, thickness: 0.02, speed: 1.0, axis: [1, 0, 0], angle: 0 },
-    { radius: 2.6, thickness: 0.015, speed: -0.7, axis: [0, 1, 0], angle: Math.PI / 3 },
-    { radius: 3.0, thickness: 0.01, speed: 0.5, axis: [0.7, 0.7, 0], angle: Math.PI / 2 },
-    { radius: 3.4, thickness: 0.008, speed: -0.3, axis: [0, 0, 1], angle: Math.PI / 4 },
+    { radius: 2.2, thickness: 0.02, speed: 1.0, axis: [1, 0, 0] as const, angle: 0 },
+    { radius: 2.6, thickness: 0.015, speed: -0.7, axis: [0, 1, 0] as const, angle: Math.PI / 3 },
+    { radius: 3.0, thickness: 0.01, speed: 0.5, axis: [0.7, 0.7, 0] as const, angle: Math.PI / 2 },
+    { radius: 3.4, thickness: 0.008, speed: -0.3, axis: [0, 0, 1] as const, angle: Math.PI / 4 },
   ], []);
 
   useFrame(({ clock }) => {
@@ -301,12 +325,6 @@ const DataCore: React.FC = () => {
   useFrame(({ clock }) => {
     const time = clock.getElapsedTime();
 
-    // if (materialRef.current) {
-    //   materialRef.current.time = time;
-    //   materialRef.current.intensity = hovered ? 1.8 : 1.2;
-    //   materialRef.current.pulseFreq = hovered ? 4.0 : 2.0;
-    // }
-
     if (coreRef.current) {
       coreRef.current.rotation.y = time * 0.5;
       coreRef.current.rotation.x = Math.sin(time * 0.3) * 0.1;
@@ -328,28 +346,10 @@ const DataCore: React.FC = () => {
 };
 
 const HolographicBackground: React.FC = () => {
-  const gridRef = useRef<THREE.GridHelper>(null!);
   const fogSphere = useRef<THREE.Mesh>(null!);
 
   useFrame(({ clock }) => {
     const time = clock.getElapsedTime();
-
-    if (gridRef.current) {
-      gridRef.current.rotation.y = time * 0.1;
-      // GridHelper material can be a single material or an array
-      if (Array.isArray(gridRef.current.material)) {
-        const materials = gridRef.current.material as THREE.Material[];
-        if (materials[0]) {
-          materials[0].opacity = 0.1 + Math.sin(time) * 0.05;
-        }
-      } else {
-        // Handle single material case
-        const material = gridRef.current.material as THREE.Material;
-        if (material) {
-          material.opacity = 0.1 + Math.sin(time) * 0.05;
-        }
-      }
-    }
 
     if (fogSphere.current) {
       fogSphere.current.rotation.y = time * 0.05;
@@ -358,21 +358,14 @@ const HolographicBackground: React.FC = () => {
   });
 
   return (
-    <>
-      {/* <gridHelper
-        ref={gridRef}
-        args={[20, 20, 0x004466, 0x002244]}
-        position={[0, -5, 0]}
-      /> */}
-      <Sphere ref={fogSphere} args={[15, 16, 16]} position={[0, 0, 0]}>
-        <meshBasicMaterial
-          color={0x001122}
-          transparent
-          opacity={0.02}
-          side={THREE.BackSide}
-        />
-      </Sphere>
-    </>
+    <Sphere ref={fogSphere} args={[15, 16, 16]} position={[0, 0, 0]}>
+      <meshBasicMaterial
+        color={0x001122}
+        transparent
+        opacity={0.02}
+        side={THREE.BackSide}
+      />
+    </Sphere>
   );
 };
 
@@ -401,10 +394,6 @@ const OrbContent: React.FC = () => {
       // Smooth floating motion
       group.current.position.y = Math.sin(time * 0.8) * 0.15;
       group.current.position.x = Math.cos(time * 0.5) * 0.1;
-
-      // Subtle mouse interaction
-      // group.current.rotation.y += (mouse.x * 0.1 - group.current.rotation.y) * 0.02;
-      // group.current.rotation.x += (-mouse.y * 0.1 - group.current.rotation.x) * 0.02;
     }
   });
 
@@ -485,10 +474,10 @@ const JarvisOrb: React.FC = () => {
         <OrbitControls
           enableZoom={true}
           enablePan={false}
-          autoRotate={false} // optional, turn on if you want auto-rotation
-          minDistance={5} // don't get too close to the orb
-          maxDistance={25} // don't zoom out too far
-          zoomSpeed={0.5} // optional: slow down zoom speed
+          autoRotate={false}
+          minDistance={5}
+          maxDistance={25}
+          zoomSpeed={0.5}
         />
       </Canvas>
     </div>

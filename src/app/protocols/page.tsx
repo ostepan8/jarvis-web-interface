@@ -63,12 +63,12 @@ export default function ProtocolsPage() {
     setRunningProtocols(prev => new Set(prev).add(protocol.name));
 
     try {
-      const result = await runProtocol(protocol.name, args);
+      const result = await runProtocol(protocol.name, args as Record<string, string | number | boolean | null> | undefined);
       setExecutionResult(result);
     } catch (error) {
       setExecutionResult({
         protocol: protocol.name,
-        results: null,
+        results: {}, // Empty object instead of null to satisfy the Record<string, unknown> type
         status: 'error',
         error: error instanceof Error ? error.message : 'Unknown error'
       });

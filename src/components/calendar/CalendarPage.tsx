@@ -13,7 +13,7 @@ import MonthView from './MonthView';
 import AddEventModal from './AddEventModal';
 import EventDetailModal from './EventDetailModal';
 import HoverTooltip from './HoverTooltip';
-import { CalendarEvent, Slot, EventStats } from '../../../types';
+import { CalendarEvent, Slot, EventStats, NewEvent } from '../../../types';
 import {
   getDayEvents,
   getWeekEvents,
@@ -82,7 +82,7 @@ const CalendarPage = () => {
   const [stats, setStats] = useState<EventStats | null>(null);
   const [conflicts, setConflicts] = useState<CalendarEvent[]>([]);
 
-  const [newEvent, setNewEvent] = useState({
+  const [newEvent, setNewEvent] = useState<NewEvent>({
     title: '',
     description: '',
     date: new Date().toISOString().split('T')[0],
@@ -92,14 +92,14 @@ const CalendarPage = () => {
     category: '',
     recurring: false,
     recurrencePattern: {
-      type: 'weekly' as const,
+      type: 'weekly',
       interval: 1,
-      max: 10
+      max: 10,
     },
     isTask: false,
     notifier: '',
     action: '',
-    notifications: ['10m']
+    notifications: ['10m'],
   });
   const [nextEvent, setNextEvent] = useState<CalendarEvent | null>(null);
 
@@ -126,6 +126,18 @@ const CalendarPage = () => {
       console.error('Error loading categories:', error);
     }
   };
+
+  const loadStats = useCallback(async () => {
+    try {
+      const startDate = formatDateForApi(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
+      const endDate = formatDateForApi(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
+      const eventStats = await getEventStats(startDate, endDate);
+      setStats(eventStats);
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  }, [currentDate]);
+
 
   const loadEvents = useCallback(async () => {
     console.log('🔄 Starting to load events...');
@@ -300,18 +312,9 @@ const CalendarPage = () => {
       console.log('🏁 Setting loading to false');
       setIsLoading(false);
     }
-  }, [currentDate, view]);
+  }, [currentDate, view, loadStats]);
 
-  const loadStats = async () => {
-    try {
-      const startDate = formatDateForApi(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
-      const endDate = formatDateForApi(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
-      const eventStats = await getEventStats(startDate, endDate);
-      setStats(eventStats);
-    } catch (error) {
-      console.error('Error loading stats:', error);
-    }
-  };
+
 
   // Filter events based on search and category
   useEffect(() => {

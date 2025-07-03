@@ -1,4 +1,4 @@
-import { ProtocolRunResult } from "@/lib/api";
+import { ProtocolRunResult } from "../../../types";
 import { AlertTriangle, CheckCircle, Loader, XCircle, Terminal, Activity, Clock } from "lucide-react";
 
 // Enhanced Execution Result Modal

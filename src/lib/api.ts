@@ -691,7 +691,7 @@ export const runProtocol = async (
     console.error("Error running protocol:", error);
     return {
       protocol: protocolName,
-      results: null,
+      results: {}, // Changed from null to empty object
       status: "error",
       error: error instanceof Error ? error.message : "Unknown error",
     };

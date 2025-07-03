@@ -1,17 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-
-// Define the types directly in the component file
-interface CalendarEvent {
-  id: string;
-  title: string;
-  description?: string;
-  start: Date;
-  end: Date;
-  color: string;
-  category?: string;
-}
+import { CalendarEvent } from '../../../types';
 
 interface Slot {
   day: Date;

@@ -6,31 +6,12 @@ import {
   AlertTriangle, Tag, Bell, Zap,
 } from 'lucide-react';
 import { CalendarEvent } from '../../../types';
-
-interface NewEvent {
-  title: string;
-  description: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  color: string;
-  category: string;
-  recurring: boolean;
-  recurrencePattern: {
-    type: 'daily' | 'weekly' | 'monthly' | 'yearly';
-    interval: number;
-    max: number;
-  };
-  isTask: boolean;
-  notifier: string;
-  action: string;
-  notifications: string[];
-}
+import { NewEvent } from '../../../types';
 
 interface Props {
   show: boolean;
   newEvent: NewEvent;
-  setNewEvent: (e: NewEvent) => void;
+  setNewEvent: React.Dispatch<React.SetStateAction<NewEvent>>;
   onClose: () => void;
   onCreate: () => void;
   isCreating?: boolean;

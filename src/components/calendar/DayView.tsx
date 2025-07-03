@@ -1,18 +1,7 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-
-// Define the types directly in the component file
-interface CalendarEvent {
-  id: string;
-  title: string;
-  description?: string;
-  start: Date;
-  end: Date;
-  color: string;
-  category?: string;
-}
-
+import { CalendarEvent } from '../../../types';
 interface Slot {
   day: Date;
   hour: number;
@@ -67,7 +56,7 @@ const useDragToCreate = (onDragCreate: (startSlot: Slot, endSlot: Slot) => void)
     }
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = useCallback(() => {
     if (dragState.isActive && dragState.startSlot && dragState.endSlot) {
       onDragCreate(dragState.startSlot, dragState.endSlot);
     }
@@ -76,7 +65,8 @@ const useDragToCreate = (onDragCreate: (startSlot: Slot, endSlot: Slot) => void)
       startSlot: null,
       endSlot: null,
     });
-  };
+  }, [dragState, onDragCreate]);
+
 
   const isSlotInDragRange = (slot: Slot): boolean => {
     if (!dragState.isActive || !dragState.startSlot || !dragState.endSlot) {
@@ -104,7 +94,7 @@ interface Props {
   events: CalendarEvent[];
   setHoveredSlot?: (slot: Slot | null) => void;
   handleSlotClick: (day: Date, hour: number) => void;
-  setSelectedEvent: (e: CalendarEvent) => void;
+  setSelectedEvent: React.Dispatch<React.SetStateAction<CalendarEvent | null>>;
   onDragCreateEvent?: (startSlot: Slot, endSlot: Slot) => void;
   isDisabled?: boolean;
 }
@@ -154,7 +144,7 @@ const DayView: React.FC<Props> = ({
       const scrollPosition = targetHour * (isMobile ? 80 : 64);
       scrollContainerRef.current.scrollTop = scrollPosition;
     }
-  }, [currentDate, isToday]);
+  }, [currentDate, isToday, isMobile]);
 
   const formatHour = (hour: number): string => {
     if (isMobile) {
@@ -337,7 +327,7 @@ const DayView: React.FC<Props> = ({
     return () => {
       document.removeEventListener('mouseup', handleGlobalMouseUp);
     };
-  }, [dragState.isActive]);
+  }, [dragState.isActive, handleDragEnd]);
 
   return (
     <div className={`relative ${isMobile ? 'h-[calc(100vh-200px)]' : 'h-[600px]'} overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 rounded-lg border border-cyan-500/30 backdrop-blur-xl shadow-[0_0_40px_rgba(34,211,238,0.1)]`}>

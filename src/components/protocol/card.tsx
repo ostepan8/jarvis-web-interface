@@ -1,4 +1,4 @@
-import { Protocol } from "@/lib/api";
+import { Protocol } from "../../../types";
 import {
     Code, Loader, Play, Settings, Terminal, ChevronDown,
     ChevronUp, Mic, Activity

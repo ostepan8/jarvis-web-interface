@@ -114,3 +114,25 @@ export interface ProtocolRunResult {
   duration?: number;
   error?: string;
 }
+
+export interface NewEvent {
+  title: string;
+  description: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  color: string;
+  category: string;
+  recurring: boolean;
+  recurrencePattern: RecurrencePattern;
+  isTask: boolean;
+  notifier: string;
+  action: string;
+  notifications: string[];
+}
+
+export interface RecurrencePattern {
+  type: "daily" | "weekly" | "monthly" | "yearly";
+  interval?: number;
+  max?: number;
+}
