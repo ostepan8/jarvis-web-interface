@@ -462,17 +462,6 @@ const JarvisOrb: React.FC = () => {
           zoomSpeed={0.5} // optional: slow down zoom speed
         />
       </Canvas>
-
-      {/* UI overlay elements */}
-      <div className="absolute top-4 left-4 text-cyan-400 font-mono text-sm opacity-70">
-        <div>JARVIS.CORE.ONLINE</div>
-        <div className="text-green-400">◉ SYSTEMS NOMINAL</div>
-      </div>
-
-      <div className="absolute bottom-4 right-4 text-cyan-400 font-mono text-xs opacity-50">
-        <div>POWER: 98.7%</div>
-        <div>UPTIME: 24:17:33</div>
-      </div>
     </div>
   );
 };
