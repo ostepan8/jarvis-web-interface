@@ -10,12 +10,7 @@ import {
   AlertCircle,
   Wifi,
   WifiOff,
-  Search,
-  Activity,
-  Brain,
-  Database,
-  Settings as SettingsIcon,
-  Cpu
+  Search
 } from "lucide-react";
 import { useEffect, useState } from "react";
 

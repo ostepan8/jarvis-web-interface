@@ -1,5 +1,12 @@
 import React, { useRef, useState, useMemo, useCallback } from 'react';
-import { Canvas, useFrame, extend, useThree } from '@react-three/fiber';
+import {
+  Canvas,
+  useFrame,
+  extend,
+  useThree,
+  type ReactThreeFiber,
+  type ThreeEvent
+} from '@react-three/fiber';
 import { Sphere, Torus, OrbitControls, Stars, shaderMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -160,15 +167,24 @@ extend({ EnergyCoreMaterial, HologramRingMaterial, ParticleMaterial });
 // TypeScript declarations for the extended materials
 declare module '@react-three/fiber' {
   interface ThreeElements {
-    energyCoreMaterial: any;
-    hologramRingMaterial: any;
-    particleMaterial: any;
+    energyCoreMaterial: ReactThreeFiber.Object3DNode<
+      THREE.ShaderMaterial,
+      typeof THREE.ShaderMaterial
+    >;
+    hologramRingMaterial: ReactThreeFiber.Object3DNode<
+      THREE.ShaderMaterial,
+      typeof THREE.ShaderMaterial
+    >;
+    particleMaterial: ReactThreeFiber.Object3DNode<
+      THREE.ShaderMaterial,
+      typeof THREE.ShaderMaterial
+    >;
   }
 }
 
 const ParticleSystem: React.FC<{ count: number; radius: number }> = ({ count, radius }) => {
   const mesh = useRef<THREE.Points>(null!);
-  const materialRef = useRef<any>(null!);
+  const materialRef = useRef<(THREE.ShaderMaterial & { time: number }) | null>(null);
 
   const particles = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -219,7 +235,9 @@ const ParticleSystem: React.FC<{ count: number; radius: number }> = ({ count, ra
 
 const EnergyRings: React.FC<{ hovered: boolean }> = ({ hovered }) => {
   const rings = useRef<(THREE.Mesh | null)[]>([]);
-  const materials = useRef<any[]>([]);
+  const materials = useRef<(
+    THREE.ShaderMaterial & { time: number; opacity: number; speed: number }
+  )[]>([]);
 
   const ringConfigs = useMemo(() => [
     { radius: 2.2, thickness: 0.02, speed: 1.0, axis: [1, 0, 0], angle: 0 },
@@ -257,7 +275,15 @@ const EnergyRings: React.FC<{ hovered: boolean }> = ({ hovered }) => {
           args={[config.radius, config.thickness, 8, 64]}
         >
           <hologramRingMaterial
-            ref={(el: any) => { materials.current[index] = el; }}
+            ref={(el: THREE.ShaderMaterial | null) => {
+              if (el) {
+                materials.current[index] = el as THREE.ShaderMaterial & {
+                  time: number;
+                  opacity: number;
+                  speed: number;
+                };
+              }
+            }}
             transparent
             side={THREE.DoubleSide}
             blending={THREE.AdditiveBlending}
@@ -268,9 +294,9 @@ const EnergyRings: React.FC<{ hovered: boolean }> = ({ hovered }) => {
   );
 };
 
-const DataCore: React.FC<{ hovered: boolean }> = ({ hovered }) => {
+const DataCore: React.FC = () => {
   const coreRef = useRef<THREE.Mesh>(null!);
-  const materialRef = useRef<any>(null!);
+  const materialRef = useRef<THREE.ShaderMaterial | null>(null);
 
   useFrame(({ clock }) => {
     const time = clock.getElapsedTime();
@@ -314,13 +340,13 @@ const HolographicBackground: React.FC = () => {
       if (Array.isArray(gridRef.current.material)) {
         const materials = gridRef.current.material as THREE.Material[];
         if (materials[0]) {
-          (materials[0] as any).opacity = 0.1 + Math.sin(time) * 0.05;
+          materials[0].opacity = 0.1 + Math.sin(time) * 0.05;
         }
       } else {
         // Handle single material case
         const material = gridRef.current.material as THREE.Material;
         if (material) {
-          (material as any).opacity = 0.1 + Math.sin(time) * 0.05;
+          material.opacity = 0.1 + Math.sin(time) * 0.05;
         }
       }
     }
@@ -355,17 +381,20 @@ const OrbContent: React.FC = () => {
   const [hovered, setHovered] = useState(false);
   const { viewport } = useThree();
 
-  const handlePointerMove = useCallback((e: any) => {
-    if (group.current) {
-      const x = (e.point.x / viewport.width) * 2;
-      const y = (e.point.y / viewport.height) * 2;
+  const handlePointerMove = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      if (group.current) {
+        const x = (e.point.x / viewport.width) * 2;
+        const y = (e.point.y / viewport.height) * 2;
 
-      // group.current.rotation.y += x * 0.01;
-      // group.current.rotation.x += y * 0.01;
-    }
-  }, [viewport]);
+        group.current.rotation.y += x * 0.01;
+        group.current.rotation.x += y * 0.01;
+      }
+    },
+    [viewport]
+  );
 
-  useFrame(({ clock, mouse }) => {
+  useFrame(({ clock }) => {
     const time = clock.getElapsedTime();
 
     if (group.current) {
@@ -389,7 +418,7 @@ const OrbContent: React.FC = () => {
         onPointerOut={() => setHovered(false)}
         onPointerMove={handlePointerMove}
       >
-        <DataCore hovered={hovered} />
+        <DataCore />
         <EnergyRings hovered={hovered} />
 
         {/* Multiple particle systems */}
