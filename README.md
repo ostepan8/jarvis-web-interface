@@ -34,3 +34,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Backend Service
+
+A small FastAPI server provides `/login` and `/signup` endpoints for the login page.
+To start the backend run:
+
+```bash
+python -m server.server
+```
+
+The server listens on `http://localhost:8000` and accepts cross-origin requests from the Next.js frontend running on port 3000.
