@@ -139,8 +139,14 @@ const CalendarPage = () => {
   }, [currentDate]);
 
 
+  // In CalendarPage.tsx, replace the loadEvents function with this fixed version:
+
   const loadEvents = useCallback(async () => {
     console.log('🔄 Starting to load events...');
+    console.log('📅 Current view:', view);
+    console.log('📅 Current date:', currentDate);
+    console.log('📅 Current date string:', currentDate.toDateString());
+
     setIsLoading(true);
 
     try {
@@ -250,33 +256,53 @@ const CalendarPage = () => {
 
       console.log('📊 Unique events after deduplication:', uniqueEvents.length);
 
-      // Filter events to only show those in the current view period
-      const filteredEvents = uniqueEvents.filter(event => {
-        try {
-          const eventDate = new Date(event.start);
-
-          if (view === 'day') {
-            return eventDate.toDateString() === currentDate.toDateString();
-          } else if (view === 'week') {
-            const weekStart = new Date(currentDate);
-            const day = weekStart.getDay();
-            weekStart.setDate(weekStart.getDate() - day);
-            const weekEnd = new Date(weekStart);
-            weekEnd.setDate(weekStart.getDate() + 6);
-            weekEnd.setHours(23, 59, 59, 999);
-
-            return eventDate >= weekStart && eventDate <= weekEnd;
-          } else { // month view
-            return eventDate.getMonth() === currentDate.getMonth() &&
-              eventDate.getFullYear() === currentDate.getFullYear();
-          }
-        } catch (error) {
-          console.error('❌ Error filtering event:', event, error);
-          return false;
-        }
+      // Log each event with its date for debugging
+      uniqueEvents.forEach((event, index) => {
+        console.log(`Event ${index + 1}: "${event.title}" on ${event.start.toDateString()} at ${event.start.toTimeString()}`);
       });
 
-      console.log('📊 Events after filtering:', filteredEvents.length);
+      // FOR DAY VIEW: Don't filter here - let DayView handle its own filtering
+      // FOR WEEK VIEW: Filter for the week period
+      // FOR MONTH VIEW: Filter for the month period
+
+      let filteredEvents = uniqueEvents;
+
+      if (view === 'week') {
+        // Filter for week view
+        const weekStart = new Date(currentDate);
+        const day = weekStart.getDay();
+        weekStart.setDate(weekStart.getDate() - day);
+        weekStart.setHours(0, 0, 0, 0);
+
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
+
+        console.log('📅 Week filter - Start:', weekStart.toDateString(), 'End:', weekEnd.toDateString());
+
+        filteredEvents = uniqueEvents.filter(event => {
+          const eventDate = new Date(event.start);
+          const inWeek = eventDate >= weekStart && eventDate <= weekEnd;
+          console.log(`Week filter: "${event.title}" (${eventDate.toDateString()}) in week: ${inWeek}`);
+          return inWeek;
+        });
+      } else if (view === 'month') {
+        // Filter for month view
+        console.log('📅 Month filter - Month:', currentDate.getMonth(), 'Year:', currentDate.getFullYear());
+
+        filteredEvents = uniqueEvents.filter(event => {
+          const eventDate = new Date(event.start);
+          const inMonth = eventDate.getMonth() === currentDate.getMonth() &&
+            eventDate.getFullYear() === currentDate.getFullYear();
+          console.log(`Month filter: "${event.title}" (${eventDate.toDateString()}) in month: ${inMonth}`);
+          return inMonth;
+        });
+      }
+      // For day view, we pass ALL events and let DayView filter them
+
+      console.log('📊 Events after view filtering:', filteredEvents.length);
+      console.log('🎯 Setting events state with:', filteredEvents.length, 'events');
+
       setEvents(filteredEvents);
 
       // Load next event with timeout

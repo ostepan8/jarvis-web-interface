@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CalendarEvent } from '../../../types';
+
 interface Slot {
   day: Date;
   hour: number;
@@ -67,7 +68,6 @@ const useDragToCreate = (onDragCreate: (startSlot: Slot, endSlot: Slot) => void)
     });
   }, [dragState, onDragCreate]);
 
-
   const isSlotInDragRange = (slot: Slot): boolean => {
     if (!dragState.isActive || !dragState.startSlot || !dragState.endSlot) {
       return false;
@@ -131,6 +131,26 @@ const DayView: React.FC<Props> = ({
       onDragCreateEvent(startSlot, endSlot);
     }
   });
+
+  // Memoize the filtered events to prevent unnecessary re-renders
+  const dayEvents = React.useMemo(() => {
+    if (!events || events.length === 0) return [];
+
+    const currentDateStr = currentDate.toDateString();
+
+    return events.filter(event => {
+      try {
+        // Ensure we have a proper Date object
+        const eventStart = event.start instanceof Date ? event.start : new Date(event.start);
+        const eventDateStr = eventStart.toDateString();
+
+        return eventDateStr === currentDateStr;
+      } catch (error) {
+        console.error('Error filtering event:', event, error);
+        return false;
+      }
+    });
+  }, [events, currentDate]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
@@ -224,12 +244,27 @@ const DayView: React.FC<Props> = ({
     }, 500);
   };
 
+  // Check if a slot has any events (including multi-hour events)
+  const slotHasEvent = (hour: number): boolean => {
+    return dayEvents.some(event => {
+      const eventStartHour = event.start.getHours();
+      const eventEndHour = event.end.getHours();
+      const eventEndMinutes = event.end.getMinutes();
+
+      if (hour === eventStartHour) return true;
+      if (hour > eventStartHour && hour < eventEndHour) return true;
+      if (hour === eventEndHour && eventEndMinutes > 0) return true;
+
+      return false;
+    });
+  };
+
   // Enhanced event collision detection and layout calculation
   const calculateEventLayout = (events: CalendarEvent[]) => {
-    const dayEvents = events.filter(event => event.start.toDateString() === currentDate.toDateString());
+    if (!events || events.length === 0) return [];
 
     // Sort events by start time
-    const sortedEvents = [...dayEvents].sort((a, b) => a.start.getTime() - b.start.getTime());
+    const sortedEvents = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
 
     // Calculate overlapping groups
     const eventLayouts = sortedEvents.map((event, index) => {
@@ -263,25 +298,10 @@ const DayView: React.FC<Props> = ({
     return eventLayouts;
   };
 
-  const eventLayouts = calculateEventLayout(events);
-
-  const slotHasEvent = (hour: number): boolean => {
-    return events.some(event => {
-      if (event.start.toDateString() !== currentDate.toDateString()) {
-        return false;
-      }
-
-      const eventStartHour = event.start.getHours();
-      const eventEndHour = event.end.getHours();
-      const eventEndMinutes = event.end.getMinutes();
-
-      if (hour === eventStartHour) return true;
-      if (hour > eventStartHour && hour < eventEndHour) return true;
-      if (hour === eventEndHour && eventEndMinutes > 0) return true;
-
-      return false;
-    });
-  };
+  // Memoize the event layouts to prevent unnecessary recalculations
+  const eventLayouts = React.useMemo(() => {
+    return calculateEventLayout(dayEvents);
+  }, [dayEvents]);
 
   // Handle mouse events for drag creation (desktop only)
   const handleMouseDown = (e: React.MouseEvent, slot: Slot) => {
