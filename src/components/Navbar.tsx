@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Zap, Shield, Activity } from 'lucide-react';
+import { Menu, X, Zap, Shield, Activity, Settings } from 'lucide-react';
 
 const navItems = [
   { href: '/calendar', label: 'Calendar', icon: Activity },
   { href: '/protocols', label: 'Protocols', icon: Shield },
+  { href: '/agents', label: 'Agents', icon: Settings },
 ];
 
 export default function JarvisNavbar() {
