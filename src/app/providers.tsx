@@ -6,12 +6,18 @@ import AuthGuard from '@/components/auth/AuthGuard';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const showNavbar = pathname !== '/login';
+
+  // Define routes where navbar should be hidden
+  const hideNavbarRoutes = ['/login', '/signup', '/forgot-password', '/reset-password'];
+  const showNavbar = !hideNavbarRoutes.includes(pathname);
+
   return (
     <AuthProvider>
       <AuthGuard>
         {showNavbar && <Navbar />}
-        {children}
+        <main className={showNavbar ? 'pt-16' : ''}>
+          {children}
+        </main>
       </AuthGuard>
     </AuthProvider>
   );
